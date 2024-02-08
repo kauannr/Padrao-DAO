@@ -42,7 +42,7 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public Seller findById(Integer id) {
-        // TODO Auto-generated method stub
+
         PreparedStatement st = null;
         ResultSet rs = null;
         try {
@@ -70,7 +70,7 @@ public class SellerDaoJDBC implements SellerDao {
     private Department instantiateDepartment(ResultSet rs) throws SQLException {
         Department dep = new Department();
         dep.setId(rs.getInt("DepartmentId"));
-        dep.setName(rs.getString("Name"));
+        dep.setName(rs.getString("DepName"));
         return dep;
     }
 
@@ -114,7 +114,10 @@ public class SellerDaoJDBC implements SellerDao {
             }
             return listSeller;
         } catch (Exception e) {
-            // TODO: handle exception
+            e.printStackTrace();
+        } finally {
+            DB.closeResultSet(rs);
+            DB.closeStatemet(st);
         }
         return null;
 
@@ -122,8 +125,38 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public List<Seller> findAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+        PreparedStatement st = null;
+        ResultSet rs = null;
+
+        try {
+            st = conn.prepareStatement("SELECT seller.*, department.Name as DepName"
+                    + " FROM seller INNER JOIN department"
+                    + " ON seller.DepartmentId = department.Id"
+                    + " ORDER BY Id");
+            rs = st.executeQuery();
+
+            List<Seller> listSeller = new ArrayList<>();
+            Map<Integer, Department> map = new HashMap<>();
+
+            while (rs.next()) {
+                Department dep = map.get(rs.getInt("DepartmentId"));
+
+                if (dep == null) {
+                    dep = instantiateDepartment(rs);
+                    map.put(rs.getInt("DepartmentId"), dep);
+                }
+                Seller seller = instantiateSeller(rs, dep);
+                listSeller.add(seller);
+            }
+            return listSeller;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DB.closeResultSet(rs);
+            DB.closeStatemet(st);
+        }
+        return null;
     }
 
 }

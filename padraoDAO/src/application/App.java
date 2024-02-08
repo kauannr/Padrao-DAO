@@ -21,6 +21,13 @@ public class App {
             System.out.println(seller2 + "\n");
         }
 
+        System.out.println("===Teste todos os Sellers===");
+        listSeller = sellerDao.findAll();
+        for (Seller seller2 : listSeller) {
+            System.out.println(seller2 + "\n");
+        }
+
+        
 
 
 
