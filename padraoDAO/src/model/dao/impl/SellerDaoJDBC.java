@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,8 +25,49 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public void insert(Seller seller) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insert'");
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        try {
+            conn.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            st = conn.prepareStatement("INSERT INTO seller"
+                    + "(Name, Email, BirthDate, BaseSalary, DepartmentId)"
+                    + " VALUES "
+                    + "(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            st.setString(1, seller.getName());
+            st.setString(2, seller.getEmail());
+            st.setDate(3, new java.sql.Date(seller.getBirthDate().getTime()));
+            st.setDouble(4, seller.getBaseSalary());
+            st.setInt(5, seller.getDepartment().getId());
+
+            int linhasAfetadas = st.executeUpdate();
+            if (linhasAfetadas > 0) {
+                rs = st.getGeneratedKeys();
+                if (rs.next()) {
+                    int novoId = rs.getInt(1);
+                    seller.setId(novoId);
+                    System.out.println("Sucesso! Id gerado: " + novoId);
+                }
+            } else {
+                throw new DbException("Falha na inserção, nenhuma linha afetada\n");
+            }
+            conn.commit();
+        } catch (Exception e) {
+            e.getMessage();
+            try {
+                conn.rollback();
+                throw new DbException("Erro na inserção e Rollback ativado");
+            } catch (SQLException e1) {
+                throw new DbException("Erro ao tentar desfazer com rollback " + e1.getMessage());
+            }
+
+        } finally {
+            DB.closeResultSet(rs);
+            DB.closeStatemet(st);
+        }
     }
 
     @Override
