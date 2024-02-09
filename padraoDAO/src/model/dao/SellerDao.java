@@ -10,7 +10,7 @@ public interface SellerDao {
 
     public void update(Seller seller);
 
-    public void delete(Seller seller);
+    public void delete(Integer id);
 
     public Seller findById(Integer id);
 

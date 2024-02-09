@@ -1,6 +1,5 @@
 package application;
 
-import java.util.Date;
 import java.util.List;
 
 import model.dao.DaoFactory;
@@ -41,5 +40,9 @@ public class App {
         sellerDao.update(seller);
         System.out.println(seller);
 
+        System.out.println("===Teste de deleção===");
+        sellerDao.delete(23);
+        sellerDao.delete(24);
+        sellerDao.delete(25);
     }
 }

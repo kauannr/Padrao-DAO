@@ -97,7 +97,6 @@ public class SellerDaoJDBC implements SellerDao {
             try {
                 conn.rollback();
             } catch (SQLException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
             e.printStackTrace();
@@ -108,9 +107,30 @@ public class SellerDaoJDBC implements SellerDao {
     }
 
     @Override
-    public void delete(Seller seller) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    public void delete(Integer id) {
+        PreparedStatement st = null;
+        try {
+            conn.setAutoCommit(false);
+            st = conn.prepareStatement("DELETE FROM seller WHERE id = ?");
+            st.setInt(1, id);
+
+            int linhasAfetadas = st.executeUpdate();
+            if (linhasAfetadas > 0) {
+                System.out.println("Sucesso! seller deletado. Linhas afetadas: " + linhasAfetadas);
+            } else {
+                throw new DbException("Erro na deleção e nenhuma linhas afetada");
+            }
+            conn.commit();
+        } catch (Exception e) {
+            try {
+                conn.rollback();
+                System.out.println(e.getMessage() + ". Rollback executado");
+            } catch (SQLException e1) {
+                throw new DbException("Erro ao voltar com rollback");
+            }
+        } finally {
+            DB.closeStatemet(st);
+        }
     }
 
     @Override
