@@ -28,9 +28,18 @@ public class App {
             System.out.println(seller2 + "\n");
         }
 
-        System.out.println("===Teste inserir novo Seller===");
-        Seller seller2 = new Seller(null, "nando", "nando@gmail.com", 
-        new Date(), 2000d, new Department(2, null));
-        sellerDao.insert(seller2);
+        /*
+         * System.out.println("===Teste inserir novo Seller===");
+         * Seller seller2 = new Seller(null, "nando", "nando@gmail.com",
+         * new Date(), 2000d, new Department(2, null));
+         * sellerDao.insert(seller2);
+         */
+
+        System.out.println("===Teste update Seller===");
+        seller = sellerDao.findById(22);
+        seller.setEmail("Brito@gmail.com");
+        sellerDao.update(seller);
+        System.out.println(seller);
+
     }
 }

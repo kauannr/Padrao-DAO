@@ -59,7 +59,7 @@ public class SellerDaoJDBC implements SellerDao {
             e.getMessage();
             try {
                 conn.rollback();
-                throw new DbException("Erro na inserção e Rollback ativado");
+                throw new DbException("Erro na inserção e Rollback ativado\n");
             } catch (SQLException e1) {
                 throw new DbException("Erro ao tentar desfazer com rollback " + e1.getMessage());
             }
@@ -72,8 +72,39 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public void update(Seller seller) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        PreparedStatement st = null;
+        try {
+            conn.setAutoCommit(false);
+            st = conn.prepareStatement("UPDATE seller "
+                    + "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? "
+                    + "WHERE Id = ?");
+
+            st.setString(1, seller.getName());
+            st.setString(2, seller.getEmail());
+            st.setDate(3, new java.sql.Date(seller.getBirthDate().getTime()));
+            st.setDouble(4, seller.getBaseSalary());
+            st.setInt(5, seller.getDepartment().getId());
+            st.setInt(6, seller.getId());
+
+            int linhasAfetadas = st.executeUpdate();
+            if (linhasAfetadas > 0) {
+                System.out.println("Sucesso! linhas alteradas: " + linhasAfetadas);
+            } else {
+                throw new DbException("Erro na atualização, nenhuma linha afetada\n");
+            }
+            conn.commit();
+        } catch (Exception e) {
+            try {
+                conn.rollback();
+            } catch (SQLException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            DB.closeStatemet(st);
+        }
+
     }
 
     @Override
