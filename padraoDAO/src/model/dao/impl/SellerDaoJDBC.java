@@ -29,10 +29,6 @@ public class SellerDaoJDBC implements SellerDao {
         ResultSet rs = null;
         try {
             conn.setAutoCommit(false);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
             st = conn.prepareStatement("INSERT INTO seller"
                     + "(Name, Email, BirthDate, BaseSalary, DepartmentId)"
                     + " VALUES "
@@ -48,7 +44,7 @@ public class SellerDaoJDBC implements SellerDao {
                 rs = st.getGeneratedKeys();
                 if (rs.next()) {
                     int novoId = rs.getInt(1);
-                    seller.setId(novoId);
+                    seller.setId(novoId); // Já atribuir à instancia do seller o id do banco
                     System.out.println("Sucesso! Id gerado: " + novoId);
                 }
             } else {

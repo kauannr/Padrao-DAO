@@ -1,5 +1,6 @@
 package application;
 
+import java.util.Date;
 import java.util.List;
 
 import model.dao.DaoFactory;
@@ -29,7 +30,7 @@ public class App {
 
         /*
          * System.out.println("===Teste inserir novo Seller===");
-         * Seller seller2 = new Seller(null, "nando", "nando@gmail.com",
+         * Seller seller2 = new Seller(null, "josefa", "josefa@gmail.com",
          * new Date(), 2000d, new Department(2, null));
          * sellerDao.insert(seller2);
          */
